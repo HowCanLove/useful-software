@@ -58,6 +58,27 @@
     <span hidden id="totalCount">0</span>
   </footer>
 
+  <!-- 详情弹窗 -->
+  <div id="modal" class="modal" hidden aria-modal="true" role="dialog" aria-labelledby="modalName">
+    <div class="modal-overlay" data-close-modal></div>
+    <div class="modal-content" role="document">
+      <button class="modal-close" data-close-modal aria-label="Close">×</button>
+      <header class="modal-header">
+        <img id="modalIcon" class="modal-icon" alt="" loading="lazy" referrerpolicy="no-referrer">
+        <div class="modal-titles">
+          <h2 id="modalName" class="modal-name"></h2>
+          <div id="modalBadges" class="modal-badges"></div>
+        </div>
+      </header>
+      <div id="modalDesc" class="modal-desc"></div>
+      <div id="modalMedia" class="modal-media"></div>
+      <div id="modalMediaEmpty" class="modal-media-empty" hidden></div>
+      <div class="modal-footer">
+        <a id="modalLink" class="modal-link-btn" href="#" target="_blank" rel="noopener noreferrer"></a>
+      </div>
+    </div>
+  </div>
+
   <script src="i18n.js"></script>
   <script src="data.js"></script>
   <script src="app.js"></script>

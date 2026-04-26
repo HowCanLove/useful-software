@@ -3,6 +3,12 @@
 // category: 'system' | 'disk' | 'productivity' | 'dev' | 'media' | 'network' | 'security' | 'files' | 'browser'
 // price: 'free' | 'freemium' | 'paid' | 'oss' (开源)
 // desc: { zh, en, ja }  (中文 / English / 日本語)，建议 2–3 句，先说做什么，再说为什么值得装
+// media (可选): [{ type, src, caption? }]，type 取值：
+//   'image'   —— src 直接是 https 图片地址
+//   'video'   —— src 是 mp4/webm 等可直接播放的视频地址
+//   'youtube' —— src 是 https://www.youtube.com/embed/<videoId>
+//                 也可以用 search-list embed: https://www.youtube.com/embed?listType=search&list=<query>
+// 不写 media 字段时弹窗会显示一个引导用户提交补充的占位区
 
 const SOFTWARE = [
   // ========== 系统工具 / System ==========
@@ -31,7 +37,10 @@ const SOFTWARE = [
       en: 'Microsoft\'s official utility suite — a single install gets you a dozen power tools: FancyZones for custom window tiling, PowerRename for batch renames, PowerToys Run (a Spotlight-style launcher), keyboard remapping, a colour picker and more. Open source, actively maintained, mandatory for Windows power users.',
       ja: 'Microsoft公式のユーティリティ集。一度インストールすれば10以上のツールがまとめて入る：FancyZones（カスタムウィンドウ整列）、PowerRename（一括リネーム）、PowerToys Run（Spotlight風ランチャー）、キーバインド変更、カラーピッカーなど。オープンソースで更新も活発、Windowsパワーユーザー必須。'
     },
-    url: 'https://learn.microsoft.com/windows/powertoys/', os: 'windows', category: 'system', price: 'oss'
+    url: 'https://learn.microsoft.com/windows/powertoys/', os: 'windows', category: 'system', price: 'oss',
+    media: [
+      { type: 'youtube', src: 'https://www.youtube.com/embed?listType=search&list=Microsoft+PowerToys+overview', caption: 'YouTube 上的 PowerToys 演示视频' }
+    ]
   },
   {
     name: 'Process Explorer',
@@ -341,7 +350,10 @@ const SOFTWARE = [
       en: 'The most powerful launcher on Mac — install extensions for calculator, translation, window management, GitHub/Linear/Jira operations, AI helpers and tons more, one hotkey to do everything. A Windows version has shipped, and the free tier is already very capable.',
       ja: 'Mac最強のランチャー。電卓、翻訳、ウィンドウ管理、GitHub/Linear/Jira操作、AIアシスタントなど豊富な拡張機能を導入でき、ホットキー一発で大半の作業が完結。Windows版もリリース済、無料版でも十分強力。'
     },
-    url: 'https://www.raycast.com/', os: 'cross', category: 'productivity', price: 'freemium'
+    url: 'https://www.raycast.com/', os: 'cross', category: 'productivity', price: 'freemium',
+    media: [
+      { type: 'youtube', src: 'https://www.youtube.com/embed?listType=search&list=Raycast+launcher+demo', caption: 'YouTube 上的 Raycast 使用演示' }
+    ]
   },
   {
     name: 'Alfred',
@@ -377,7 +389,10 @@ const SOFTWARE = [
       en: 'A Markdown-based notes app where every file is local plaintext, with backlinks to grow a knowledge graph. The third-party plugin ecosystem is wildly active — thousands of plugins extend it into a GTD tool, journal, kanban, whiteboard, you name it. Free for personal use; only Sync and Publish are paid.',
       ja: 'Markdownベースのノートアプリ。ファイルはすべてローカルのプレーンテキスト、バックリンクで知識グラフを構築。サードパーティプラグインのエコシステムが非常に活発で、数千のプラグインによりGTDツール・日記・カンバン・ホワイトボードなどに拡張可能。個人利用は無料、Sync/Publishのみ有料。'
     },
-    url: 'https://obsidian.md/', os: 'cross', category: 'productivity', price: 'freemium'
+    url: 'https://obsidian.md/', os: 'cross', category: 'productivity', price: 'freemium',
+    media: [
+      { type: 'youtube', src: 'https://www.youtube.com/embed?listType=search&list=Obsidian+notes+tutorial', caption: 'YouTube 上的 Obsidian 入门教程' }
+    ]
   },
   {
     name: 'Logseq',
@@ -433,7 +448,10 @@ const SOFTWARE = [
       en: 'The reigning king of modern code editors — free, cross-platform, the largest extension ecosystem, continuously optimised, deep Git and debugger integration. Microsoft-built but MIT-licensed open source, with first-class extensions for nearly every language.',
       ja: 'モダンなコードエディタの王者。無料・クロスプラットフォーム・拡張エコシステム最大規模・継続的なパフォーマンス改善・Git/デバッガ統合が深い。Microsoft製だがMITライセンスでオープンソース、ほぼすべての言語に公式または高品質な拡張がある。'
     },
-    url: 'https://code.visualstudio.com/', os: 'cross', category: 'dev', price: 'oss'
+    url: 'https://code.visualstudio.com/', os: 'cross', category: 'dev', price: 'oss',
+    media: [
+      { type: 'youtube', src: 'https://www.youtube.com/embed?listType=search&list=Visual+Studio+Code+tips+tricks', caption: 'YouTube 上的 VS Code 实用技巧合集' }
+    ]
   },
   {
     name: 'Cursor',
@@ -714,7 +732,10 @@ const SOFTWARE = [
       en: 'A Hollywood-grade colour suite descended to the masses — editing, colour, audio, VFX and subtitles in one app; even the free tier is powerful enough to make a feature film. The paid Studio adds AI features, 4K+ output and more GPU acceleration.',
       ja: 'ハリウッド級のカラーグレーディングソフトが一般に降臨。編集・カラー・音声・VFX・字幕を1本に統合、無料版でも長編映画が作れるほど強力。有料のStudio版はAI機能・4K以上・より多くのGPUアクセラレーションを追加。'
     },
-    url: 'https://www.blackmagicdesign.com/products/davinciresolve', os: 'cross', category: 'media', price: 'freemium'
+    url: 'https://www.blackmagicdesign.com/products/davinciresolve', os: 'cross', category: 'media', price: 'freemium',
+    media: [
+      { type: 'youtube', src: 'https://www.youtube.com/embed?listType=search&list=DaVinci+Resolve+18+tutorial', caption: 'YouTube 上的 DaVinci Resolve 教程' }
+    ]
   },
   {
     name: 'GIMP',

@@ -1,4 +1,4 @@
-// 主逻辑：渲染、过滤、搜索、暗色模式、多语言
+// 主逻辑：渲染、过滤、搜索、暗色模式、多语言、详情弹窗
 (function () {
   'use strict';
 
@@ -10,6 +10,7 @@
     os: 'all',
     category: 'all',
     query: '',
+    modalItem: null,
   };
 
   const $grid = document.getElementById('softwareGrid');
@@ -21,6 +22,16 @@
   const $themeToggle = document.getElementById('themeToggle');
   const $langSwitch = document.getElementById('langSwitch');
   const $osTabs = document.querySelectorAll('.os-tab');
+
+  // Modal elements
+  const $modal = document.getElementById('modal');
+  const $modalIcon = document.getElementById('modalIcon');
+  const $modalName = document.getElementById('modalName');
+  const $modalBadges = document.getElementById('modalBadges');
+  const $modalDesc = document.getElementById('modalDesc');
+  const $modalMedia = document.getElementById('modalMedia');
+  const $modalMediaEmpty = document.getElementById('modalMediaEmpty');
+  const $modalLink = document.getElementById('modalLink');
 
   // ---------- helpers ----------
 
@@ -43,10 +54,7 @@
   function t(key, vars) {
     const dict = I18N[state.lang] || I18N[DEFAULT_LANG];
     let str = dict[key];
-    if (str == null) {
-      // 退化到默认语言
-      str = (I18N[DEFAULT_LANG] || {})[key] || key;
-    }
+    if (str == null) str = (I18N[DEFAULT_LANG] || {})[key] || key;
     if (vars) {
       for (const k in vars) {
         str = str.replace(new RegExp('\\{' + k + '\\}', 'g'), vars[k]);
@@ -57,6 +65,19 @@
 
   function descFor(item) {
     return (item.desc && (item.desc[state.lang] || item.desc[DEFAULT_LANG])) || '';
+  }
+
+  function faviconFor(url) {
+    try {
+      const host = new URL(url).hostname;
+      return `https://www.google.com/s2/favicons?domain=${host}&sz=128`;
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function hostnameFor(url) {
+    try { return new URL(url).hostname; } catch (e) { return ''; }
   }
 
   // ---------- language detection ----------
@@ -71,10 +92,8 @@
     for (const raw of candidates) {
       if (!raw) continue;
       const lower = String(raw).toLowerCase();
-      // 精确匹配
       const exact = supportedCodes.find(c => lower === c || lower.startsWith(c + '-'));
       if (exact) return exact;
-      // zh-Hans / zh-Hant 等情形已被 startsWith('zh-') 覆盖
     }
     return DEFAULT_LANG;
   }
@@ -93,6 +112,7 @@
     buildCategoryChips();
     applyStaticI18n();
     render();
+    if (state.modalItem) openModal(state.modalItem); // 重新渲染弹窗内容到新语言
   }
 
   function applyLangToDocument() {
@@ -110,7 +130,6 @@
       el.textContent = t(el.dataset.i18n);
     });
     document.querySelectorAll('[data-i18n-attr]').forEach(el => {
-      // 格式: "attr:key,attr:key"
       const pairs = el.dataset.i18nAttr.split(',');
       pairs.forEach(p => {
         const [attr, key] = p.split(':').map(s => s.trim());
@@ -188,19 +207,30 @@
     return true;
   }
 
-  function cardHTML(item) {
+  function badgesHTML(item) {
     const osBadge = `<span class="badge badge-os">${t('os.badge.' + item.os) || item.os}</span>`;
     const priceClass = `badge-price-${item.price}`;
     const priceBadge = `<span class="badge ${priceClass}">${t('price.' + item.price) || item.price}</span>`;
+    return osBadge + priceBadge;
+  }
+
+  function cardHTML(item, idx) {
+    const hasMedia = Array.isArray(item.media) && item.media.length > 0;
+    const mediaBadge = hasMedia
+      ? `<span class="card-media-badge">📺 ${item.media.length}</span>`
+      : '';
     const safeUrl = escapeHtml(item.url);
     return `
-      <article class="card">
+      <article class="card" data-idx="${idx}" tabindex="0" role="button" aria-label="${escapeHtml(item.name)}">
         <div class="card-head">
           <h3 class="card-name">${highlight(item.name, state.query)}</h3>
-          <div class="card-badges">${osBadge}${priceBadge}</div>
+          <div class="card-badges">${badgesHTML(item)}</div>
         </div>
         <p class="card-desc">${highlight(descFor(item), state.query)}</p>
-        <a class="card-link" href="${safeUrl}" target="_blank" rel="noopener noreferrer">${t('card.visit')}</a>
+        <div class="card-actions">
+          <a class="card-link" href="${safeUrl}" target="_blank" rel="noopener noreferrer" data-no-modal>${t('card.visit')}</a>
+          ${mediaBadge}
+        </div>
       </article>
     `;
   }
@@ -213,18 +243,113 @@
       $empty.textContent = t('empty.title');
     } else {
       $empty.hidden = true;
-      $grid.innerHTML = filtered.map(cardHTML).join('');
+      // 渲染时把过滤后数组的索引映射回原 SOFTWARE 索引，便于点击查找
+      $grid.innerHTML = filtered.map(item => {
+        const realIdx = SOFTWARE.indexOf(item);
+        return cardHTML(item, realIdx);
+      }).join('');
     }
     const filteredFlag = (state.os !== 'all' || state.category !== 'all' || state.query)
       ? ' ' + t('count.filtered') : '';
     $count.textContent = t('count.total', { n: filtered.length }) + filteredFlag;
 
-    // 页脚（用 innerHTML 因为含一个 <a>）
     const footer = document.getElementById('footerText');
     if (footer) {
       const linkHTML = `<a href="https://github.com/HowCanLove/useful-software/edit/main/data.js" target="_blank" rel="noopener">${t('footer.linkText')}</a>`;
       footer.innerHTML = t('footer.text', { link: linkHTML, n: SOFTWARE.length });
     }
+
+    bindCardClicks();
+  }
+
+  function bindCardClicks() {
+    $grid.querySelectorAll('.card').forEach(card => {
+      const open = () => {
+        const idx = parseInt(card.dataset.idx, 10);
+        const item = SOFTWARE[idx];
+        if (item) openModal(item);
+      };
+      card.addEventListener('click', e => {
+        // 点击卡片上的"访问官网"按钮时不开弹窗，让链接正常跳转
+        if (e.target.closest('[data-no-modal]')) return;
+        open();
+      });
+      card.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          open();
+        }
+      });
+    });
+  }
+
+  // ---------- modal ----------
+
+  function mediaItemHTML(m) {
+    const captionHTML = m.caption
+      ? `<div class="modal-media-caption">${escapeHtml(m.caption)}</div>`
+      : '';
+    if (m.type === 'image') {
+      return `<div class="modal-media-item"><img src="${escapeHtml(m.src)}" loading="lazy" alt="${escapeHtml(m.caption || '')}" referrerpolicy="no-referrer">${captionHTML}</div>`;
+    }
+    if (m.type === 'video') {
+      return `<div class="modal-media-item"><video controls preload="metadata" src="${escapeHtml(m.src)}"></video>${captionHTML}</div>`;
+    }
+    if (m.type === 'youtube') {
+      return `<div class="modal-media-item"><div class="modal-media-iframe-wrap"><iframe src="${escapeHtml(m.src)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>${captionHTML}</div>`;
+    }
+    return '';
+  }
+
+  function openModal(item) {
+    state.modalItem = item;
+    $modalIcon.src = faviconFor(item.url);
+    $modalIcon.alt = item.name;
+    $modalName.textContent = item.name;
+    $modalBadges.innerHTML = badgesHTML(item);
+    $modalDesc.innerHTML = '<p>' + escapeHtml(descFor(item)).replace(/\n\s*\n/g, '</p><p>') + '</p>';
+
+    if (Array.isArray(item.media) && item.media.length) {
+      $modalMedia.innerHTML = item.media.map(mediaItemHTML).join('');
+      $modalMedia.hidden = false;
+      $modalMediaEmpty.hidden = true;
+    } else {
+      $modalMedia.innerHTML = '';
+      $modalMedia.hidden = true;
+      const editUrl = 'https://github.com/HowCanLove/useful-software/edit/main/data.js';
+      const noMediaText = state.lang === 'zh'
+        ? `🖼️ 暂无截图或视频。可以 <a href="${editUrl}" target="_blank" rel="noopener">编辑 data.js</a> 给这条加 <code>media</code> 字段。`
+        : state.lang === 'ja'
+          ? `🖼️ スクリーンショット・動画は未登録。<a href="${editUrl}" target="_blank" rel="noopener">data.js</a> を編集して <code>media</code> フィールドを追加できます。`
+          : `🖼️ No screenshots or videos yet. <a href="${editUrl}" target="_blank" rel="noopener">Edit data.js</a> to add a <code>media</code> field for this entry.`;
+      $modalMediaEmpty.innerHTML = noMediaText;
+      $modalMediaEmpty.hidden = false;
+    }
+
+    $modalLink.href = item.url;
+    $modalLink.textContent = `${t('card.visit')}  ·  ${hostnameFor(item.url)}`;
+
+    $modal.hidden = false;
+    document.body.classList.add('modal-open');
+    setTimeout(() => $modal.querySelector('.modal-close').focus(), 50);
+  }
+
+  function closeModal() {
+    state.modalItem = null;
+    $modal.hidden = true;
+    document.body.classList.remove('modal-open');
+    // 停止 iframe/video 的播放
+    $modalMedia.querySelectorAll('iframe').forEach(f => { f.src = f.src; });
+    $modalMedia.querySelectorAll('video').forEach(v => v.pause());
+  }
+
+  function bindModalEvents() {
+    $modal.addEventListener('click', e => {
+      if (e.target.closest('[data-close-modal]')) closeModal();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !$modal.hidden) closeModal();
+    });
   }
 
   // ---------- search ----------
@@ -271,6 +396,7 @@
   applyStaticI18n();
   bindSearch();
   initTheme();
+  bindModalEvents();
   $search.setAttribute('placeholder', t('search.placeholder'));
   render();
 })();

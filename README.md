@@ -13,6 +13,7 @@
 - 🌙 **Dark mode** —— Follows system preference, manual toggle, persisted
 - 📱 **Responsive** —— Looks great on mobile, tablet and desktop
 - 🚀 **Zero deps** —— Pure static HTML/CSS/JS, no build step
+- 🖼️ **Detail modal** —— Click any card to see the full intro plus optional screenshots / videos
 
 ## ➕ Adding software
 
@@ -34,6 +35,25 @@ Edit [`data.js`](./data.js) and append an object:
 ```
 
 Push to `main` and GitHub Pages redeploys automatically.
+
+### Optional: add screenshots / videos to the detail modal
+
+Each entry can carry a `media` array. The modal renders each item; cards show a small `📺 N` badge when media is present.
+
+```js
+{
+  // ...other fields...
+  media: [
+    { type: 'image',   src: 'https://example.com/screenshot.png',                     caption: '主界面' },
+    { type: 'video',   src: 'https://example.com/demo.mp4',                            caption: '功能演示' },
+    { type: 'youtube', src: 'https://www.youtube.com/embed/dQw4w9WgXcQ',              caption: '官方介绍' },
+    // YouTube 也支持搜索结果嵌入（不需要具体的 video ID）：
+    { type: 'youtube', src: 'https://www.youtube.com/embed?listType=search&list=tool+name+demo' }
+  ]
+}
+```
+
+For YouTube, **always** use the `https://www.youtube.com/embed/<id>` form (not `watch?v=<id>`).
 
 ## 🌐 Adding a new language
 
