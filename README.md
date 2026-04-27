@@ -77,6 +77,16 @@ node scripts/update-versions.mjs --dry-run
 
 **Recommended cadence**: run weekly and commit `versions.json` so the deployed site stays current. Easy to wire into a GitHub Actions cron later.
 
+## 🖼️ Updating the social-share image
+
+`og-image.png` (1200×630) is what gets shown when the site is shared on Twitter / Discord / Telegram / Slack / WeChat etc. To regenerate it after editing `scripts/og-template.html`:
+
+```bash
+node scripts/render-og.mjs
+```
+
+The script drives Microsoft Edge in headless mode (Chrome / Chromium also auto-detected) — no extra dependencies.
+
 ## 🌐 Adding a new language
 
 1. Open [`i18n.js`](./i18n.js), add a new entry to `SUPPORTED_LANGS`:

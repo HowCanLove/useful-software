@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://howcanlove.github.io/useful-software/sitemap.xml
