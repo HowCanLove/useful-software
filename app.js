@@ -321,6 +321,17 @@
     });
   }
 
+  // 各 OS tab 真正会展示的条目数（与 matches() 的逻辑保持一致）
+  const osCounts = (function () {
+    let win = 0, mac = 0, cross = 0;
+    SOFTWARE.forEach(s => {
+      if (s.os === 'windows') win++;
+      else if (s.os === 'macos') mac++;
+      else if (s.os === 'cross') cross++;
+    });
+    return { all: SOFTWARE.length, windows: win + cross, macos: mac + cross, cross };
+  })();
+
   function buildOsTabs() {
     const labels = {
       all:     t('os.all'),
@@ -330,7 +341,11 @@
     };
     $osTabs.forEach(tab => {
       const key = tab.dataset.os;
-      tab.textContent = labels[key] || key;
+      const label = labels[key] || key;
+      const count = osCounts[key];
+      tab.innerHTML = count != null
+        ? `${escapeHtml(label)} <span class="os-tab-count">${count}</span>`
+        : escapeHtml(label);
       tab.classList.toggle('active', key === state.os);
     });
   }
