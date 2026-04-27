@@ -372,7 +372,15 @@
 
   function matches(item) {
     if (state.favoritesOnly && !isFavorite(item)) return false;
-    if (state.os !== 'all' && item.os !== state.os) return false;
+    // Windows / macOS tab 也要包含跨平台软件，避免 Win 用户筛 Win 时漏掉 VSCode/Obsidian 等
+    // Cross tab 仍然只显示真正的跨平台条目
+    if (state.os !== 'all') {
+      if (state.os === 'cross') {
+        if (item.os !== 'cross') return false;
+      } else if (item.os !== state.os && item.os !== 'cross') {
+        return false;
+      }
+    }
     if (state.category !== 'all' && item.category !== state.category) return false;
     if (state.query) {
       const q = state.query.toLowerCase();
