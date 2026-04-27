@@ -2,9 +2,9 @@
 
 精选 Windows 与 macOS 实用软件清单 / Curated Windows & macOS apps / 厳選Windows・macOSアプリ
 
-🌐 **Live site / 在线访问 / オンライン:** https://howcanlove.github.io/useful-software/
+🌐 **Live site / 在线访问 / オンライン:** https://512347.xyz/
 
-[![screenshot](./screenshot.png)](https://howcanlove.github.io/useful-software/)
+[![screenshot](./screenshot.png)](https://512347.xyz/)
 
 ## ✨ Features
 
