@@ -4,6 +4,8 @@
 
 🌐 **Live site / 在线访问 / オンライン:** https://howcanlove.github.io/useful-software/
 
+[![screenshot](./screenshot.png)](https://howcanlove.github.io/useful-software/)
+
 ## ✨ Features
 
 - 🌍 **Multilingual** —— Auto-detects browser language. Supports 中文 / English / 日本語. User selection persists.
