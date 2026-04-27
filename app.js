@@ -383,14 +383,23 @@
         state.os = tab.dataset.os;
         persistOs();
         $osTabs.forEach(t => t.classList.toggle('active', t.dataset.os === state.os));
+        // 切换 OS 后，分类计数和可见的分类都要随之刷新
+        buildCategoryChips();
         render();
       });
     });
   }
 
   function buildCategoryChips() {
-    const counts = { all: SOFTWARE.length };
-    SOFTWARE.forEach(s => { counts[s.category] = (counts[s.category] || 0) + 1; });
+    // 计数随 OS tab 变化：选中 Windows 时只统计 win + cross 范围内的分类
+    const visibleByOs = SOFTWARE.filter(s => osMatches(s, state.os));
+    const counts = { all: visibleByOs.length };
+    visibleByOs.forEach(s => { counts[s.category] = (counts[s.category] || 0) + 1; });
+
+    // 当前选中的分类在新 OS 下数量为 0 时，自动回退到"全部"避免出现空结果
+    if (state.category !== 'all' && !counts[state.category]) {
+      state.category = 'all';
+    }
 
     const cats = ['system','disk','files','productivity','dev','media','network','security','browser'];
     const chips = [
@@ -412,17 +421,15 @@
     });
   }
 
+  function osMatches(item, os) {
+    if (os === 'all') return true;
+    if (os === 'cross') return item.os === 'cross';
+    return item.os === os || item.os === 'cross';
+  }
+
   function matches(item) {
     if (state.favoritesOnly && !isFavorite(item)) return false;
-    // Windows / macOS tab 也要包含跨平台软件，避免 Win 用户筛 Win 时漏掉 VSCode/Obsidian 等
-    // Cross tab 仍然只显示真正的跨平台条目
-    if (state.os !== 'all') {
-      if (state.os === 'cross') {
-        if (item.os !== 'cross') return false;
-      } else if (item.os !== state.os && item.os !== 'cross') {
-        return false;
-      }
-    }
+    if (!osMatches(item, state.os)) return false;
     if (state.category !== 'all' && item.category !== state.category) return false;
     if (state.query) {
       const q = state.query.toLowerCase();
