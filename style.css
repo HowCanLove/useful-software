@@ -500,6 +500,17 @@ a:hover { color: var(--primary-hover); }
   border-color: var(--primary-hover);
   color: white;
 }
+/* Fallback variant: no direct asset URL, goes to homepage. Less visual weight. */
+.card-download-fallback {
+  background: transparent;
+  color: var(--text-2);
+  border-color: var(--border);
+}
+.card-download-fallback:hover {
+  background: var(--surface-2);
+  color: var(--text);
+  border-color: var(--text-3);
+}
 
 .card-actions {
   flex-wrap: wrap;
@@ -747,6 +758,15 @@ a:hover { color: var(--primary-hover); }
 }
 .modal-download-btn:hover {
   background: color-mix(in srgb, var(--success) 85%, black);
+}
+.modal-download-btn.modal-download-fallback {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.modal-download-btn.modal-download-fallback:hover {
+  background: var(--surface);
+  border-color: var(--text-3);
 }
 .modal-footer { flex-wrap: wrap; }
 

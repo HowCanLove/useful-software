@@ -111,11 +111,13 @@
   }
 
   function downloadInfoFor(item) {
-    // Resolution order: scripted versions.json → manual data.js → none
+    // Resolution order: scripted versions.json → manual data.js → fall back to homepage so the button always appears
     const v = VERSIONS[slugFor(item)] || {};
-    const url = v.downloadUrl || item.downloadUrl || '';
+    const url = v.downloadUrl || item.downloadUrl || item.url || '';
     const version = v.version || item.version || '';
-    return { url, version };
+    // hasDirect 用来区分"直接下载"与"跳到官网让用户自己找"，影响 tooltip 与版本号是否展示
+    const hasDirect = !!(v.downloadUrl || item.downloadUrl);
+    return { url, version, hasDirect };
   }
 
   // ---------- slug map (for hash routing & favorites identity) ----------
@@ -455,8 +457,9 @@
     const favIcon = fav ? '★' : '☆';
     const favLabel = t(fav ? 'favorites.aria.remove' : 'favorites.aria.add');
     const dl = downloadInfoFor(item);
+    const dlTitle = t(dl.hasDirect ? 'card.downloadTitle' : 'card.downloadFallbackTitle');
     const downloadBtn = dl.url
-      ? `<a class="card-link card-download" href="${escapeHtml(dl.url)}" target="_blank" rel="noopener noreferrer" data-no-modal title="${escapeHtml(t('card.downloadTitle'))}">${t('card.download')}</a>`
+      ? `<a class="card-link card-download${dl.hasDirect ? '' : ' card-download-fallback'}" href="${escapeHtml(dl.url)}" target="_blank" rel="noopener noreferrer" data-no-modal title="${escapeHtml(dlTitle)}">${t('card.download')}</a>`
       : '';
     return `
       <article class="card" data-idx="${idx}" tabindex="0" role="button" aria-label="${escapeHtml(item.name)}">
@@ -582,9 +585,10 @@
     const dl = downloadInfoFor(item);
     if (dl.url) {
       $modalDownload.href = dl.url;
-      const versionTag = dl.version ? `  ·  ${t('card.version', { v: dl.version })}` : '';
+      const versionTag = dl.hasDirect && dl.version ? `  ·  ${t('card.version', { v: dl.version })}` : '';
       $modalDownload.textContent = `${t('card.download')}${versionTag}`;
-      $modalDownload.title = t('card.downloadTitle');
+      $modalDownload.title = t(dl.hasDirect ? 'card.downloadTitle' : 'card.downloadFallbackTitle');
+      $modalDownload.classList.toggle('modal-download-fallback', !dl.hasDirect);
       $modalDownload.hidden = false;
     } else {
       $modalDownload.hidden = true;
