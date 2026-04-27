@@ -28,6 +28,9 @@
         <button class="os-tab" data-os="macos">🍎 macOS</button>
         <button class="os-tab" data-os="cross">🌐 Cross-platform</button>
       </div>
+      <button id="favToggle" class="fav-toggle" aria-pressed="false">
+        <span id="favToggleLabel">⭐ Favorites (0)</span>
+      </button>
       <div class="search-wrap">
         <input id="searchInput" type="search" placeholder="" autocomplete="off" data-i18n-attr="placeholder:search.placeholder,aria-label:search.placeholder">
         <div id="langSwitch" class="lang-switch" role="tablist" aria-label="Switch language" data-i18n-attr="aria-label:lang.toggle">
@@ -44,7 +47,17 @@
       <!-- 由 JS 动态填充 -->
     </section>
 
-    <p class="result-count" id="resultCount"></p>
+    <div class="result-row">
+      <p class="result-count" id="resultCount"></p>
+      <div class="sort-wrap">
+        <label for="sortSelect" class="sort-label" data-i18n="sort.label">Sort:</label>
+        <select id="sortSelect" class="sort-select">
+          <option value="default" data-i18n="sort.default">Recommended</option>
+          <option value="name-asc" data-i18n="sort.nameAsc">Name A→Z</option>
+          <option value="name-desc" data-i18n="sort.nameDesc">Name Z→A</option>
+        </select>
+      </div>
+    </div>
 
     <section class="grid" id="softwareGrid">
       <!-- 软件卡片由 JS 动态填充 -->
@@ -63,6 +76,7 @@
     <div class="modal-overlay" data-close-modal></div>
     <div class="modal-content" role="document">
       <button class="modal-close" data-close-modal aria-label="Close">×</button>
+      <button id="modalFav" class="modal-fav" aria-pressed="false" aria-label="Favorite">☆</button>
       <header class="modal-header">
         <img id="modalIcon" class="modal-icon" alt="" loading="lazy" referrerpolicy="no-referrer">
         <div class="modal-titles">

@@ -5,6 +5,8 @@
   const LANG_STORAGE_KEY = 'lang';
   const THEME_STORAGE_KEY = 'theme';
   const OS_STORAGE_KEY = 'os';
+  const FAVORITES_STORAGE_KEY = 'favorites';
+  const SORT_STORAGE_KEY = 'sort';
 
   const state = {
     lang: DEFAULT_LANG,
@@ -12,6 +14,9 @@
     category: 'all',
     query: '',
     modalItem: null,
+    favorites: new Set(),
+    favoritesOnly: false,
+    sort: 'default',
   };
 
   const $grid = document.getElementById('softwareGrid');
@@ -33,6 +38,11 @@
   const $modalMedia = document.getElementById('modalMedia');
   const $modalMediaEmpty = document.getElementById('modalMediaEmpty');
   const $modalLink = document.getElementById('modalLink');
+  const $modalFav = document.getElementById('modalFav');
+  const $favToggle = document.getElementById('favToggle');
+  const $favToggleLabel = document.getElementById('favToggleLabel');
+  const $sortSelect = document.getElementById('sortSelect');
+  const $resultRow = document.querySelector('.result-row');
 
   // ---------- helpers ----------
 
@@ -79,6 +89,143 @@
 
   function hostnameFor(url) {
     try { return new URL(url).hostname; } catch (e) { return ''; }
+  }
+
+  // ---------- slug map (for hash routing & favorites identity) ----------
+
+  function slugify(s) {
+    return String(s)
+      .toLowerCase()
+      .replace(/[^\w\s-]+/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+  }
+
+  const slugToItem = new Map();
+  const itemToSlug = new Map();
+  SOFTWARE.forEach((item, i) => {
+    let slug = slugify(item.name) || ('item-' + i);
+    if (slugToItem.has(slug)) slug = slug + '-' + i;
+    slugToItem.set(slug, item);
+    itemToSlug.set(item, slug);
+  });
+  function slugFor(item) { return itemToSlug.get(item) || ''; }
+
+  // ---------- favorites ----------
+
+  function loadFavorites() {
+    try {
+      const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) state.favorites = new Set(arr);
+      }
+    } catch (e) {}
+  }
+
+  function persistFavorites() {
+    try {
+      localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(Array.from(state.favorites)));
+    } catch (e) {}
+  }
+
+  function isFavorite(item) {
+    return state.favorites.has(slugFor(item));
+  }
+
+  function toggleFavorite(item) {
+    const slug = slugFor(item);
+    if (!slug) return;
+    if (state.favorites.has(slug)) state.favorites.delete(slug);
+    else state.favorites.add(slug);
+    persistFavorites();
+    updateFavToggleLabel();
+    if (state.modalItem === item) updateModalFav();
+    render();
+  }
+
+  function updateFavToggleLabel() {
+    if (!$favToggleLabel) return;
+    $favToggleLabel.textContent = t('favorites.toggle', { n: state.favorites.size });
+    $favToggle.classList.toggle('active', state.favoritesOnly);
+    $favToggle.setAttribute('aria-pressed', state.favoritesOnly ? 'true' : 'false');
+  }
+
+  function bindFavToggle() {
+    $favToggle.addEventListener('click', () => {
+      state.favoritesOnly = !state.favoritesOnly;
+      updateFavToggleLabel();
+      render();
+    });
+  }
+
+  // ---------- sort ----------
+
+  function loadSort() {
+    try {
+      const saved = localStorage.getItem(SORT_STORAGE_KEY);
+      if (saved && ['default', 'name-asc', 'name-desc'].indexOf(saved) !== -1) {
+        state.sort = saved;
+      }
+    } catch (e) {}
+  }
+
+  function persistSort() {
+    try { localStorage.setItem(SORT_STORAGE_KEY, state.sort); } catch (e) {}
+  }
+
+  function bindSort() {
+    $sortSelect.value = state.sort;
+    $sortSelect.addEventListener('change', () => {
+      state.sort = $sortSelect.value;
+      persistSort();
+      render();
+    });
+  }
+
+  function applySort(list) {
+    if (state.sort === 'name-asc') {
+      return list.slice().sort((a, b) => a.name.localeCompare(b.name));
+    }
+    if (state.sort === 'name-desc') {
+      return list.slice().sort((a, b) => b.name.localeCompare(a.name));
+    }
+    return list;
+  }
+
+  // ---------- hash routing ----------
+
+  function setHashForItem(item) {
+    const slug = slugFor(item);
+    if (slug && location.hash !== '#' + slug) {
+      history.replaceState(null, '', '#' + slug);
+    }
+  }
+
+  function clearHash() {
+    if (location.hash) {
+      history.replaceState(null, '', location.pathname + location.search);
+    }
+  }
+
+  function openFromHash() {
+    const hash = decodeURIComponent(location.hash.replace(/^#/, ''));
+    if (!hash) return;
+    const item = slugToItem.get(hash);
+    if (item) openModal(item);
+  }
+
+  function bindHashChange() {
+    window.addEventListener('hashchange', () => {
+      const hash = decodeURIComponent(location.hash.replace(/^#/, ''));
+      const item = hash && slugToItem.get(hash);
+      if (item) {
+        if (state.modalItem !== item) openModal(item);
+      } else if (state.modalItem) {
+        closeModal({ keepHash: true });
+      }
+    });
   }
 
   // ---------- OS detection ----------
@@ -135,6 +282,7 @@
     buildOsTabs();
     buildCategoryChips();
     applyStaticI18n();
+    updateFavToggleLabel();
     render();
     if (state.modalItem) openModal(state.modalItem); // 重新渲染弹窗内容到新语言
   }
@@ -223,6 +371,7 @@
   }
 
   function matches(item) {
+    if (state.favoritesOnly && !isFavorite(item)) return false;
     if (state.os !== 'all' && item.os !== state.os) return false;
     if (state.category !== 'all' && item.category !== state.category) return false;
     if (state.query) {
@@ -245,8 +394,12 @@
       ? `<span class="card-media-badge">📺 ${item.media.length}</span>`
       : '';
     const safeUrl = escapeHtml(item.url);
+    const fav = isFavorite(item);
+    const favIcon = fav ? '★' : '☆';
+    const favLabel = t(fav ? 'favorites.aria.remove' : 'favorites.aria.add');
     return `
       <article class="card" data-idx="${idx}" tabindex="0" role="button" aria-label="${escapeHtml(item.name)}">
+        <button class="card-fav${fav ? ' active' : ''}" data-no-modal data-fav-idx="${idx}" aria-pressed="${fav}" aria-label="${escapeHtml(favLabel)}" title="${escapeHtml(favLabel)}">${favIcon}</button>
         <div class="card-head">
           <h3 class="card-name">${highlight(item.name, state.query)}</h3>
           <div class="card-badges">${badgesHTML(item)}</div>
@@ -261,11 +414,13 @@
   }
 
   function render() {
-    const filtered = SOFTWARE.filter(matches);
+    const filtered = applySort(SOFTWARE.filter(matches));
     if (filtered.length === 0) {
       $grid.innerHTML = '';
       $empty.hidden = false;
-      $empty.textContent = t('empty.title');
+      const emptyKey = state.favoritesOnly && state.favorites.size === 0
+        ? 'empty.favorites' : 'empty.title';
+      $empty.textContent = t(emptyKey);
     } else {
       $empty.hidden = true;
       // 渲染时把过滤后数组的索引映射回原 SOFTWARE 索引，便于点击查找
@@ -274,7 +429,7 @@
         return cardHTML(item, realIdx);
       }).join('');
     }
-    const filteredFlag = (state.os !== 'all' || state.category !== 'all' || state.query)
+    const filteredFlag = (state.favoritesOnly || state.os !== 'all' || state.category !== 'all' || state.query)
       ? ' ' + t('count.filtered') : '';
     $count.textContent = t('count.total', { n: filtered.length }) + filteredFlag;
 
@@ -295,7 +450,7 @@
         if (item) openModal(item);
       };
       card.addEventListener('click', e => {
-        // 点击卡片上的"访问官网"按钮时不开弹窗，让链接正常跳转
+        // 点击卡片上的"访问官网"按钮和星标时不开弹窗
         if (e.target.closest('[data-no-modal]')) return;
         open();
       });
@@ -304,6 +459,14 @@
           e.preventDefault();
           open();
         }
+      });
+    });
+    $grid.querySelectorAll('.card-fav').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const idx = parseInt(btn.dataset.favIdx, 10);
+        const item = SOFTWARE[idx];
+        if (item) toggleFavorite(item);
       });
     });
   }
@@ -354,23 +517,40 @@
     $modalLink.href = item.url;
     $modalLink.textContent = `${t('card.visit')}  ·  ${hostnameFor(item.url)}`;
 
+    updateModalFav();
+
     $modal.hidden = false;
     document.body.classList.add('modal-open');
+    setHashForItem(item);
     setTimeout(() => $modal.querySelector('.modal-close').focus(), 50);
   }
 
-  function closeModal() {
+  function updateModalFav() {
+    if (!state.modalItem || !$modalFav) return;
+    const fav = isFavorite(state.modalItem);
+    $modalFav.textContent = fav ? '★' : '☆';
+    $modalFav.classList.toggle('active', fav);
+    $modalFav.setAttribute('aria-pressed', fav ? 'true' : 'false');
+    $modalFav.setAttribute('aria-label', t(fav ? 'favorites.aria.remove' : 'favorites.aria.add'));
+    $modalFav.setAttribute('title', t(fav ? 'favorites.aria.remove' : 'favorites.aria.add'));
+  }
+
+  function closeModal(opts) {
     state.modalItem = null;
     $modal.hidden = true;
     document.body.classList.remove('modal-open');
     // 停止 iframe/video 的播放
     $modalMedia.querySelectorAll('iframe').forEach(f => { f.src = f.src; });
     $modalMedia.querySelectorAll('video').forEach(v => v.pause());
+    if (!(opts && opts.keepHash)) clearHash();
   }
 
   function bindModalEvents() {
     $modal.addEventListener('click', e => {
       if (e.target.closest('[data-close-modal]')) closeModal();
+    });
+    $modalFav.addEventListener('click', () => {
+      if (state.modalItem) toggleFavorite(state.modalItem);
     });
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape' && !$modal.hidden) closeModal();
@@ -413,6 +593,8 @@
 
   state.lang = detectInitialLang();
   state.os = detectInitialOs();
+  loadFavorites();
+  loadSort();
   $totalCount.textContent = SOFTWARE.length;
   applyLangToDocument();
   buildLangSwitch();
@@ -423,6 +605,11 @@
   bindSearch();
   initTheme();
   bindModalEvents();
+  bindFavToggle();
+  bindSort();
+  bindHashChange();
+  updateFavToggleLabel();
   $search.setAttribute('placeholder', t('search.placeholder'));
   render();
+  openFromHash();
 })();
