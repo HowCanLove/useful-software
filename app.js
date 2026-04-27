@@ -4,6 +4,7 @@
 
   const LANG_STORAGE_KEY = 'lang';
   const THEME_STORAGE_KEY = 'theme';
+  const OS_STORAGE_KEY = 'os';
 
   const state = {
     lang: DEFAULT_LANG,
@@ -78,6 +79,29 @@
 
   function hostnameFor(url) {
     try { return new URL(url).hostname; } catch (e) { return ''; }
+  }
+
+  // ---------- OS detection ----------
+
+  function detectOS() {
+    const platform = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+    const ua = navigator.userAgent || '';
+    if (/Mac/i.test(platform) || /Mac/i.test(ua) || /iPhone|iPad|iPod/i.test(ua)) return 'macos';
+    if (/Win/i.test(platform) || /Windows/i.test(ua)) return 'windows';
+    return 'all';
+  }
+
+  function detectInitialOs() {
+    let saved;
+    try { saved = localStorage.getItem(OS_STORAGE_KEY); } catch (e) {}
+    const valid = ['all', 'windows', 'macos', 'cross'];
+    if (saved && valid.indexOf(saved) !== -1) return saved;
+    const detected = detectOS();
+    return valid.indexOf(detected) !== -1 ? detected : 'all';
+  }
+
+  function persistOs() {
+    try { localStorage.setItem(OS_STORAGE_KEY, state.os); } catch (e) {}
   }
 
   // ---------- language detection ----------
@@ -167,6 +191,7 @@
     $osTabs.forEach(tab => {
       tab.addEventListener('click', () => {
         state.os = tab.dataset.os;
+        persistOs();
         $osTabs.forEach(t => t.classList.toggle('active', t.dataset.os === state.os));
         render();
       });
@@ -387,6 +412,7 @@
   // ---------- init ----------
 
   state.lang = detectInitialLang();
+  state.os = detectInitialOs();
   $totalCount.textContent = SOFTWARE.length;
   applyLangToDocument();
   buildLangSwitch();
