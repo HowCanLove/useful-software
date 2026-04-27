@@ -38,6 +38,7 @@
   const $modalMedia = document.getElementById('modalMedia');
   const $modalMediaEmpty = document.getElementById('modalMediaEmpty');
   const $modalLink = document.getElementById('modalLink');
+  const $modalDownload = document.getElementById('modalDownload');
   const $modalFav = document.getElementById('modalFav');
   const $favToggle = document.getElementById('favToggle');
   const $favToggleLabel = document.getElementById('favToggleLabel');
@@ -89,6 +90,32 @@
 
   function hostnameFor(url) {
     try { return new URL(url).hostname; } catch (e) { return ''; }
+  }
+
+  // ---------- versions sidecar (populated by scripts/update-versions.mjs) ----------
+
+  let VERSIONS = {};
+
+  function loadVersions() {
+    // Best-effort, async — re-renders when ready. 404 is normal before first script run.
+    fetch('versions.json', { cache: 'no-cache' })
+      .then(r => r.ok ? r.json() : null)
+      .then(json => {
+        if (json && typeof json === 'object') {
+          VERSIONS = json;
+          render();
+          if (state.modalItem) openModal(state.modalItem);
+        }
+      })
+      .catch(() => {});
+  }
+
+  function downloadInfoFor(item) {
+    // Resolution order: scripted versions.json → manual data.js → none
+    const v = VERSIONS[slugFor(item)] || {};
+    const url = v.downloadUrl || item.downloadUrl || '';
+    const version = v.version || item.version || '';
+    return { url, version };
   }
 
   // ---------- slug map (for hash routing & favorites identity) ----------
@@ -420,6 +447,10 @@
     const fav = isFavorite(item);
     const favIcon = fav ? '★' : '☆';
     const favLabel = t(fav ? 'favorites.aria.remove' : 'favorites.aria.add');
+    const dl = downloadInfoFor(item);
+    const downloadBtn = dl.url
+      ? `<a class="card-link card-download" href="${escapeHtml(dl.url)}" target="_blank" rel="noopener noreferrer" data-no-modal title="${escapeHtml(t('card.downloadTitle'))}">${t('card.download')}</a>`
+      : '';
     return `
       <article class="card" data-idx="${idx}" tabindex="0" role="button" aria-label="${escapeHtml(item.name)}">
         <button class="card-fav${fav ? ' active' : ''}" data-no-modal data-fav-idx="${idx}" aria-pressed="${fav}" aria-label="${escapeHtml(favLabel)}" title="${escapeHtml(favLabel)}">${favIcon}</button>
@@ -430,6 +461,7 @@
         <p class="card-desc">${highlight(descFor(item), state.query)}</p>
         <div class="card-actions">
           <a class="card-link" href="${safeUrl}" target="_blank" rel="noopener noreferrer" data-no-modal>${t('card.visit')}</a>
+          ${downloadBtn}
           ${mediaBadge}
         </div>
       </article>
@@ -540,6 +572,17 @@
     $modalLink.href = item.url;
     $modalLink.textContent = `${t('card.visit')}  ·  ${hostnameFor(item.url)}`;
 
+    const dl = downloadInfoFor(item);
+    if (dl.url) {
+      $modalDownload.href = dl.url;
+      const versionTag = dl.version ? `  ·  ${t('card.version', { v: dl.version })}` : '';
+      $modalDownload.textContent = `${t('card.download')}${versionTag}`;
+      $modalDownload.title = t('card.downloadTitle');
+      $modalDownload.hidden = false;
+    } else {
+      $modalDownload.hidden = true;
+    }
+
     updateModalFav();
 
     $modal.hidden = false;
@@ -618,6 +661,7 @@
   state.os = detectInitialOs();
   loadFavorites();
   loadSort();
+  loadVersions();
   $totalCount.textContent = SOFTWARE.length;
   applyLangToDocument();
   buildLangSwitch();

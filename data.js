@@ -9,6 +9,11 @@
 //   'youtube' —— src 是 https://www.youtube.com/embed/<videoId>
 //                 也可以用 search-list embed: https://www.youtube.com/embed?listType=search&list=<query>
 // 不写 media 字段时弹窗会显示一个引导用户提交补充的占位区
+//
+// downloadUrl (可选): 手填的下载地址。卡片右下会出现"📥 下载"按钮。
+// repo (可选): 'owner/name' 形式的 GitHub 仓库。若 url 已经是 github.com 链接可省略。
+//              填了之后 `node scripts/update-versions.mjs` 会自动抓最新 release 写入 versions.json，
+//              前端会用脚本生成的 downloadUrl 覆盖手填的，并显示版本号。
 
 const SOFTWARE = [
   // ========== 系统工具 / System ==========
@@ -37,7 +42,7 @@ const SOFTWARE = [
       en: 'Microsoft\'s official utility suite — a single install gets you a dozen power tools: FancyZones for custom window tiling, PowerRename for batch renames, PowerToys Run (a Spotlight-style launcher), keyboard remapping, a colour picker and more. Open source, actively maintained, mandatory for Windows power users.',
       ja: 'Microsoft公式のユーティリティ集。一度インストールすれば10以上のツールがまとめて入る：FancyZones（カスタムウィンドウ整列）、PowerRename（一括リネーム）、PowerToys Run（Spotlight風ランチャー）、キーバインド変更、カラーピッカーなど。オープンソースで更新も活発、Windowsパワーユーザー必須。'
     },
-    url: 'https://learn.microsoft.com/windows/powertoys/', os: 'windows', category: 'system', price: 'oss',
+    url: 'https://learn.microsoft.com/windows/powertoys/', repo: 'microsoft/PowerToys',os: 'windows', category: 'system', price: 'oss',
     media: [
       { type: 'youtube', src: 'https://www.youtube.com/embed?listType=search&list=Microsoft+PowerToys+overview', caption: 'YouTube 上的 PowerToys 演示视频' }
     ]
@@ -67,7 +72,7 @@ const SOFTWARE = [
       en: 'Ridiculously powerful keyboard/mouse/window automation scripting — a few lines define global hotkeys, text expansions, macros and window manipulation. Think of it as the Swiss Army knife for "anything keyboard-related on Windows", with a huge community library of ready-made scripts. Free and open source.',
       ja: '異常に強力なキーボード・マウス・ウィンドウ自動化スクリプト。数行でグローバルホットキー、テキスト展開、マクロ、ウィンドウ操作が定義可能。Windowsで「キーボードでやりたいことは何でも」できる万能ナイフ的存在で、コミュニティが提供する既製スクリプトも豊富。無料オープンソース。'
     },
-    url: 'https://www.autohotkey.com/', os: 'windows', category: 'system', price: 'oss'
+    url: 'https://www.autohotkey.com/', repo: 'AutoHotkey/AutoHotkey',os: 'windows', category: 'system', price: 'oss'
   },
   {
     name: 'Karabiner-Elements',
@@ -76,7 +81,7 @@ const SOFTWARE = [
       en: 'The most powerful keyboard remapper on Mac — turn CapsLock into Esc or a Hyper key, define complex modifier chords, even "hold space to use vim arrow keys" tricks. Remapping happens at the driver layer so Vim, IDEs and anything else that cares about modifiers see the correct events. Free and open source.',
       ja: 'Mac最強のキーリマッパー。CapsLockをEsc/Hyperキーに、複雑な修飾キー組み合わせ、「Space長押しで矢印キー」のような技まで設定可能。リマップはドライバ層で行われるので、Vim/IDEなどモディファイアを重視するアプリでも正しく認識される。無料オープンソース。'
     },
-    url: 'https://karabiner-elements.pqrs.org/', os: 'macos', category: 'system', price: 'oss'
+    url: 'https://karabiner-elements.pqrs.org/', repo: 'pqrs-org/Karabiner-Elements',os: 'macos', category: 'system', price: 'oss'
   },
   {
     name: 'Hammerspoon',
@@ -85,7 +90,7 @@ const SOFTWARE = [
       en: 'A Lua-scripted automation framework for macOS — single-line definitions for things like "Cmd+1 jumps to Chrome", "snap window to right half", "auto-open the meeting on Tuesday 9am". Learning curve is non-trivial but once it clicks, you can\'t go back. Free and open source.',
       ja: 'macOSをLuaで自動化するフレームワーク。「Cmd+1でChromeに切替」「ウィンドウを右半分に」「火曜9時に会議を自動起動」といったことを一行で書ける。学習コストはやや高いが、一度慣れると後戻りできない。無料オープンソース。'
     },
-    url: 'https://www.hammerspoon.org/', os: 'macos', category: 'system', price: 'oss'
+    url: 'https://www.hammerspoon.org/', repo: 'Hammerspoon/hammerspoon',os: 'macos', category: 'system', price: 'oss'
   },
   {
     name: 'BetterTouchTool',
@@ -121,7 +126,7 @@ const SOFTWARE = [
       en: 'The window-snapping must-have on Mac (spiritual successor to the abandoned Spectacle): Ctrl+Opt+arrow tiles windows to halves, quarters, thirds. Free and open source; Rectangle Pro adds snapshots and edge-trigger snapping.',
       ja: 'Macウィンドウスナップの定番（更新停止したSpectacleの後継）。Ctrl+Opt+矢印キーで画面の半分・四分割・三分割に整列。無料オープンソースで、有料版Rectangle Proではスナップショットや端へのドラッグスナップなどが追加。'
     },
-    url: 'https://rectangleapp.com/', os: 'macos', category: 'system', price: 'oss'
+    url: 'https://rectangleapp.com/', repo: 'rxhanson/Rectangle',os: 'macos', category: 'system', price: 'oss'
   },
   {
     name: 'AltTab',
@@ -130,7 +135,7 @@ const SOFTWARE = [
       en: 'Brings Windows-style Alt+Tab to Mac — switch by window instead of by app, with thumbnail previews much more useful than Cmd+Tab\'s. Filter specific apps, switch across spaces, lots of tweaks. Free and open source.',
       ja: 'Windows風のAlt+TabをMacに移植。アプリ単位ではなくウィンドウ単位で切り替えでき、サムネイルプレビューがCmd+Tabより遥かに直感的。特定アプリの除外、デスクトップ間切り替えなど設定豊富。無料オープンソース。'
     },
-    url: 'https://alt-tab-macos.netlify.app/', os: 'macos', category: 'system', price: 'oss'
+    url: 'https://alt-tab-macos.netlify.app/', repo: 'lwouis/alt-tab-macos',os: 'macos', category: 'system', price: 'oss'
   },
   {
     name: 'Bartender',
@@ -195,7 +200,7 @@ const SOFTWARE = [
       en: 'A classic disk visualiser whose treemap fills the screen with rectangles sized by file — you can see "that huge red block" instantly. Free and open source; slower than WizTree but the visual is more striking.',
       ja: '定番のディスク可視化ツール。ツリーマップが画面いっぱいにファイル比率の長方形を敷き詰め、「あの大きな赤いブロック」が何かが一目瞭然。無料オープンソースで、スキャンはWizTreeより遅いが視覚効果は秀逸。'
     },
-    url: 'https://windirstat.net/', os: 'windows', category: 'disk', price: 'oss'
+    url: 'https://windirstat.net/', repo: 'windirstat/windirstat',os: 'windows', category: 'disk', price: 'oss'
   },
   {
     name: 'DaisyDisk',
@@ -285,7 +290,7 @@ const SOFTWARE = [
       en: 'A modern Windows file manager replacement — tabs, dark mode, Git integration, dual pane, Fluent design. Open source, UI borrows heavily from Finder and macOS, easily the best third-party File Explorer alternative on Windows 11.',
       ja: 'モダンなWindowsファイルマネージャー代替。タブ、ダークモード、Git統合、デュアルペイン、Fluent Design採用。オープンソースでUIはFinder/macOSを参考にしており、Windows 11の標準エクスプローラーの最良の代替。'
     },
-    url: 'https://files.community/', os: 'windows', category: 'files', price: 'oss'
+    url: 'https://files.community/', repo: 'files-community/Files',os: 'windows', category: 'files', price: 'oss'
   },
   {
     name: 'Listary',
@@ -312,7 +317,7 @@ const SOFTWARE = [
       en: 'Insanely feature-rich capture, screen-record and upload tool — scrolling capture, OCR, GIF recording, auto-upload to image hosts, hotkey customisation, workflow orchestration. All free and open source, with enough depth to deserve a 30-minute exploration.',
       ja: '機能満載のスクショ・録画・アップロードツール。スクロールキャプチャ、OCR、GIF録画、画像ホスト自動アップロード、ホットキーカスタマイズ、ワークフロー編成、すべて無料オープンソース。機能が多すぎるので30分かけて探索する価値あり。'
     },
-    url: 'https://getsharex.com/', os: 'windows', category: 'files', price: 'oss'
+    url: 'https://getsharex.com/', repo: 'ShareX/ShareX',os: 'windows', category: 'files', price: 'oss'
   },
   {
     name: 'CleanShot X',
@@ -341,7 +346,7 @@ const SOFTWARE = [
       en: 'A minimal clipboard history tool for Mac — open source, free, menu-bar icon and a hotkey to recall history. Designed to do one thing well, unlike some tools trying to become all-in-one assistants.',
       ja: 'Mac向けのシンプルなクリップボード履歴ツール。オープンソース無料、メニューバーアイコンとホットキーで履歴呼び出し。「一つのことをきちんと」という設計思想で、他ツールのような全能化を狙わない。'
     },
-    url: 'https://maccy.app/', os: 'macos', category: 'productivity', price: 'oss'
+    url: 'https://maccy.app/', repo: 'p0deje/Maccy',os: 'macos', category: 'productivity', price: 'oss'
   },
   {
     name: 'Raycast',
@@ -371,7 +376,7 @@ const SOFTWARE = [
       en: 'Open-source launcher for Windows in the spirit of Alfred/Raycast, with plugin extensibility (the ecosystem is still maturing). Free, open source, the modern successor to Wox.',
       ja: 'Windows向けのオープンソースランチャー。Alfred/Raycast風のアーキテクチャでプラグイン拡張対応（エコシステムは発展途上）。無料オープンソースで、Woxのモダンな後継。'
     },
-    url: 'https://www.flowlauncher.com/', os: 'windows', category: 'productivity', price: 'oss'
+    url: 'https://www.flowlauncher.com/', repo: 'Flow-Launcher/Flow.Launcher',os: 'windows', category: 'productivity', price: 'oss'
   },
   {
     name: 'Wox',
@@ -380,7 +385,7 @@ const SOFTWARE = [
       en: 'A classic open-source Windows launcher that inspired PowerToys Run and Flow Launcher. Official updates have slowed; new users are better off with Flow Launcher or PowerToys Run today.',
       ja: 'Windowsの定番オープンソースランチャー。PowerToys RunやFlow Launcherはこれにインスパイアされた。公式更新は鈍化しており、新規利用ならFlow LauncherまたはPowerToys Run推奨。'
     },
-    url: 'http://www.wox.one/', os: 'windows', category: 'productivity', price: 'oss'
+    url: 'http://www.wox.one/', repo: 'Wox-launcher/Wox',os: 'windows', category: 'productivity', price: 'oss'
   },
   {
     name: 'Obsidian',
@@ -401,7 +406,7 @@ const SOFTWARE = [
       en: 'Open-source outliner notes app like Roam Research, but local-first and privacy-friendly. Auto-generates a daily journal page; every thought is a block that can be backlinked, embedded and queried. The favourite for outliner-style note-takers.',
       ja: 'オープンソースのアウトライナーノート。Roam Research風だがローカルファースト、プライバシー重視。毎日自動でデイリーノートを生成、すべての発想がブロック単位でバックリンク・埋込・クエリ可能。アウトライン派ノート愛好家の決定版。'
     },
-    url: 'https://logseq.com/', os: 'cross', category: 'productivity', price: 'oss'
+    url: 'https://logseq.com/', repo: 'logseq/logseq',os: 'cross', category: 'productivity', price: 'oss'
   },
   {
     name: 'Notion',
@@ -419,7 +424,7 @@ const SOFTWARE = [
       en: 'Open-source notes app — end-to-end encryption, self-hosted sync, Markdown editing, Web Clipper. Geekier than Notion, but you fully own your data. Cross-platform with mobile clients.',
       ja: 'オープンソースのノートアプリ。エンドツーエンド暗号化、セルフホスト同期、Markdown編集、Web Clipper対応。Notionよりギーク寄りだが、最大の強みはデータを完全に自分で管理できる点。クロスプラットフォーム、モバイルアプリあり。'
     },
-    url: 'https://joplinapp.org/', os: 'cross', category: 'productivity', price: 'oss'
+    url: 'https://joplinapp.org/', repo: 'laurent22/joplin',os: 'cross', category: 'productivity', price: 'oss'
   },
   {
     name: 'Anki',
@@ -428,7 +433,7 @@ const SOFTWARE = [
       en: 'Spaced-repetition flashcards — the gold standard for memorising vocabulary, medical/law boards, language learning. Open source, cross-platform; desktop and Android free, iOS paid (revenue funds the project). Decks are shareable.',
       ja: '間隔反復アルゴリズムの暗記カード。単語学習、医師・司法試験対策、語学定着の決定版。オープンソース、クロスプラットフォーム、デスクトップ/Androidは無料、iOSは有料（収益はプロジェクト維持に充当）。デッキ共有可能。'
     },
-    url: 'https://apps.ankiweb.net/', os: 'cross', category: 'productivity', price: 'oss'
+    url: 'https://apps.ankiweb.net/', repo: 'ankitects/anki',os: 'cross', category: 'productivity', price: 'oss'
   },
   {
     name: 'Zotero',
@@ -437,7 +442,7 @@ const SOFTWARE = [
       en: 'Free open-source reference manager — auto-grabs paper/web metadata, generates citations in any format, integrates with Word/LibreOffice for inline references. Essential for grad students and researchers. 300MB free cloud storage, paid plans expand it.',
       ja: '無料オープンソースの文献管理ツール。論文・ウェブのメタデータを自動取得、各種引用フォーマットに対応、Word/LibreOfficeへの参考文献挿入もシームレス。大学院生・研究者必携。クラウドは300MB無料、有料プランで拡張可。'
     },
-    url: 'https://www.zotero.org/', os: 'cross', category: 'productivity', price: 'oss'
+    url: 'https://www.zotero.org/', repo: 'zotero/zotero',os: 'cross', category: 'productivity', price: 'oss'
   },
 
   // ========== 开发 / Dev ==========
@@ -448,7 +453,7 @@ const SOFTWARE = [
       en: 'The reigning king of modern code editors — free, cross-platform, the largest extension ecosystem, continuously optimised, deep Git and debugger integration. Microsoft-built but MIT-licensed open source, with first-class extensions for nearly every language.',
       ja: 'モダンなコードエディタの王者。無料・クロスプラットフォーム・拡張エコシステム最大規模・継続的なパフォーマンス改善・Git/デバッガ統合が深い。Microsoft製だがMITライセンスでオープンソース、ほぼすべての言語に公式または高品質な拡張がある。'
     },
-    url: 'https://code.visualstudio.com/', os: 'cross', category: 'dev', price: 'oss',
+    url: 'https://code.visualstudio.com/', repo: 'microsoft/vscode',os: 'cross', category: 'dev', price: 'oss',
     media: [
       { type: 'youtube', src: 'https://www.youtube.com/embed?listType=search&list=Visual+Studio+Code+tips+tricks', caption: 'YouTube 上的 VS Code 实用技巧合集' }
     ]
@@ -478,7 +483,7 @@ const SOFTWARE = [
       en: 'The de-facto Terminal replacement on Mac — split panes, hotkey windows, fast input history, auto colour, clipboard integration, a decade-plus of features. Free, open source, mandatory for any heavy macOS shell user.',
       ja: 'Mac標準ターミナルの事実上の代替。分割画面、ホットキーウィンドウ、高速入力履歴、自動配色、クリップボード統合など10年以上の機能蓄積。無料オープンソース、macOSのヘビー端末ユーザー必携。'
     },
-    url: 'https://iterm2.com/', os: 'macos', category: 'dev', price: 'oss'
+    url: 'https://iterm2.com/', repo: 'gnachman/iTerm2',os: 'macos', category: 'dev', price: 'oss'
   },
   {
     name: 'Warp',
@@ -505,7 +510,7 @@ const SOFTWARE = [
       en: 'GitHub\'s official Git GUI client, beginner-friendly — visual commit/push/pull, branch switching, conflict resolution, one-click PR creation. Power users may find it too basic, but as an onboarding tool it\'s solid. Free and open source.',
       ja: 'GitHub公式のGit GUIクライアント、初心者にやさしい設計。コミット/プッシュ/プル/ブランチ切替/コンフリクト解決/PR作成をGUIで。ヘビーユーザーには物足りないが、入門ツールとして優秀。無料オープンソース。'
     },
-    url: 'https://desktop.github.com/', os: 'cross', category: 'dev', price: 'oss'
+    url: 'https://desktop.github.com/', repo: 'desktop/desktop',os: 'cross', category: 'dev', price: 'oss'
   },
   {
     name: 'Sourcetree',
@@ -541,7 +546,7 @@ const SOFTWARE = [
       en: 'Open-source Postman alternative — lighter, more modern UI, faster to start. Supports GraphQL, gRPC and WebSocket; the free tier is fully featured locally, with paid or self-hosted cloud sync.',
       ja: 'Postmanのオープンソース代替。軽量・モダンUI・起動も速い。GraphQL、gRPC、WebSocket対応、無料版でローカル機能は完全、クラウド同期は有料またはセルフホスト。'
     },
-    url: 'https://insomnia.rest/', os: 'cross', category: 'dev', price: 'oss'
+    url: 'https://insomnia.rest/', repo: 'Kong/insomnia',os: 'cross', category: 'dev', price: 'oss'
   },
   {
     name: 'Hoppscotch',
@@ -550,7 +555,7 @@ const SOFTWARE = [
       en: 'Lightweight web-based API client — runs in your browser, open source, free, self-hostable. Simpler than Postman but covers everyday REST/GraphQL/WebSocket testing, with fast startup and tiny memory footprint.',
       ja: '軽量なWebベースAPIクライアント。ブラウザで動作、オープンソース無料、セルフホスト可能。Postmanより簡素だが日常のREST/GraphQL/WebSocketテストには十分、高速起動でメモリ消費も少ない。'
     },
-    url: 'https://hoppscotch.io/', os: 'cross', category: 'dev', price: 'oss'
+    url: 'https://hoppscotch.io/', repo: 'hoppscotch/hoppscotch',os: 'cross', category: 'dev', price: 'oss'
   },
   {
     name: 'DBeaver',
@@ -559,7 +564,7 @@ const SOFTWARE = [
       en: 'Universal database GUI client — MySQL/PostgreSQL/Oracle/SQL Server/SQLite/MongoDB/Redis and 80+ databases in one tool. Community Edition is free and open source; Enterprise adds advanced NoSQL features. Java-based, memory-hungry, but enormously capable.',
       ja: '汎用データベースGUIクライアント。MySQL/PostgreSQL/Oracle/SQL Server/SQLite/MongoDB/Redisなど80以上のDBに1ツールで対応。コミュニティ版は無料オープンソース、エンタープライズ版で高度なNoSQL機能追加。Java製でメモリは食うが機能は圧倒的。'
     },
-    url: 'https://dbeaver.io/', os: 'cross', category: 'dev', price: 'oss'
+    url: 'https://dbeaver.io/', repo: 'dbeaver/dbeaver',os: 'cross', category: 'dev', price: 'oss'
   },
   {
     name: 'TablePlus',
@@ -595,7 +600,7 @@ const SOFTWARE = [
       en: 'Cross-platform FTP/SFTP/WebDAV/S3/Azure/Google Cloud Storage client — intuitive UI, encryption support, pairs with Mountain Duck (same company\'s paid product) to mount cloud as local drives. Free, open source, donation-supported.',
       ja: 'クロスプラットフォームのFTP/SFTP/WebDAV/S3/Azure/Google Cloud Storageクライアント。直感的UI、暗号化対応、同社の有料製品Mountain Duckと組み合わせるとクラウドをローカルドライブとしてマウント可能。無料オープンソース、寄付支援型。'
     },
-    url: 'https://cyberduck.io/', os: 'cross', category: 'dev', price: 'oss'
+    url: 'https://cyberduck.io/', repo: 'iterate-ch/cyberduck',os: 'cross', category: 'dev', price: 'oss'
   },
   {
     name: 'Transmit',
@@ -613,7 +618,7 @@ const SOFTWARE = [
       en: 'Local API mock tool — spin up fake endpoints in seconds, hugely useful for front-ends waiting on the back-end. Supports proxying, file responses, dynamic templates. Free, open source, cross-platform.',
       ja: 'ローカルAPIモックツール。数秒でダミーエンドポイント構築、バックエンド待ちのフロントエンド開発で特に便利。プロキシ、ファイルレスポンス、動的テンプレート対応。無料オープンソース、クロスプラットフォーム。'
     },
-    url: 'https://mockoon.com/', os: 'cross', category: 'dev', price: 'oss'
+    url: 'https://mockoon.com/', repo: 'mockoon/mockoon',os: 'cross', category: 'dev', price: 'oss'
   },
   {
     name: 'Homebrew',
@@ -622,7 +627,7 @@ const SOFTWARE = [
       en: 'The de-facto package manager for Mac/Linux — `brew install foo` is one line for every CLI tool and GUI app (via cask), with managed upgrades and uninstalls. Mandatory for Mac users; nearly every tutorial assumes you have it.',
       ja: 'Mac/Linuxの事実上標準のパッケージマネージャー。`brew install foo`の一行でCLIツールからGUIアプリ（cask経由）までインストール・更新・削除をすべて管理。Macユーザー必携、ほぼすべてのチュートリアルが導入済を前提としている。'
     },
-    url: 'https://brew.sh/', os: 'cross', category: 'dev', price: 'oss'
+    url: 'https://brew.sh/', repo: 'Homebrew/brew',os: 'cross', category: 'dev', price: 'oss'
   },
   {
     name: 'Scoop',
@@ -631,7 +636,7 @@ const SOFTWARE = [
       en: 'A command-line package manager for Windows — installs everything portably to your user dir, no system pollution, no admin needed. Compared to Chocolatey it\'s the developer\'s choice for installing git, jq, ripgrep and other CLI tools. Free and open source.',
       ja: 'Windowsのコマンドラインパッケージマネージャー。すべてユーザディレクトリにポータブルインストール、システムを汚さず管理者権限不要。Chocolateyと比べて開発者向け、git/jq/ripgrepなどCLIツールの導入で特に快適。無料オープンソース。'
     },
-    url: 'https://scoop.sh/', os: 'windows', category: 'dev', price: 'oss'
+    url: 'https://scoop.sh/', repo: 'ScoopInstaller/Scoop',os: 'windows', category: 'dev', price: 'oss'
   },
   {
     name: 'Chocolatey',
@@ -649,7 +654,7 @@ const SOFTWARE = [
       en: 'Microsoft\'s official package manager — built into Windows 11 and auto-updated on Windows 10 via the Microsoft Store. CLI installs that pull from the Store or vendors. Official answer to Chocolatey; the catalogue is growing fast.',
       ja: 'Microsoft公式のパッケージマネージャー。Windows 11標準搭載、Windows 10ではMicrosoft Store経由で自動更新。CLIインストールでStoreまたはベンダーから取得。Chocolateyへの公式アンサーで、カタログは急速に拡充中。'
     },
-    url: 'https://learn.microsoft.com/windows/package-manager/', os: 'windows', category: 'dev', price: 'oss'
+    url: 'https://learn.microsoft.com/windows/package-manager/', repo: 'microsoft/winget-cli',os: 'windows', category: 'dev', price: 'oss'
   },
 
   // ========== 多媒体 / Media ==========
@@ -669,7 +674,7 @@ const SOFTWARE = [
       en: 'A minimal yet powerful command-line-style player — excellent performance, config-file driven, scriptable. Power users craft perfect custom builds; IINA, SMPlayer and others are GUI front-ends to it. Free, open source, cross-platform.',
       ja: 'シンプルだが強力なCLIスタイルプレーヤー。高性能、設定ファイル駆動、スクリプト拡張対応。こだわり派は理想形にカスタマイズ可能で、IINAやSMPlayerなどのGUIはこれをベースにしている。無料オープンソース、クロスプラットフォーム。'
     },
-    url: 'https://mpv.io/', os: 'cross', category: 'media', price: 'oss'
+    url: 'https://mpv.io/', repo: 'mpv-player/mpv',os: 'cross', category: 'media', price: 'oss'
   },
   {
     name: 'PotPlayer',
@@ -687,7 +692,7 @@ const SOFTWARE = [
       en: 'A modern native video player on Mac — mpv core with a Swift UI that feels right at home in macOS. Supports trackpad gestures, Touch Bar, dark mode; more "Mac" than VLC, the go-to QuickTime replacement. Free and open source.',
       ja: 'mpvエンジン＋Swift製UIで、macOSに完全に溶け込むモダンな動画プレーヤー。トラックパッドジェスチャー、Touch Bar、ダークモード対応で、VLCより「Mac的」。QuickTimeの代替として第一選択。無料オープンソース。'
     },
-    url: 'https://iina.io/', os: 'macos', category: 'media', price: 'oss'
+    url: 'https://iina.io/', repo: 'iina/iina',os: 'macos', category: 'media', price: 'oss'
   },
   {
     name: 'foobar2000',
@@ -705,7 +710,7 @@ const SOFTWARE = [
       en: 'Free open-source video transcoder — professional-grade compression, format conversion, resolution/bitrate tweaks, with rich device-targeted presets (phone, TV, web). Essential for any video re-encoding work.',
       ja: '無料オープンソースの動画変換ツール。圧縮・フォーマット変換・解像度/ビットレート調整をプロ仕様で実行可能、デバイス別（スマホ・TV・Web）プリセットも豊富。動画エンコード作業の定番。'
     },
-    url: 'https://handbrake.fr/', os: 'cross', category: 'media', price: 'oss'
+    url: 'https://handbrake.fr/', repo: 'HandBrake/HandBrake',os: 'cross', category: 'media', price: 'oss'
   },
   {
     name: 'OBS Studio',
@@ -714,7 +719,7 @@ const SOFTWARE = [
       en: 'Professional-grade streaming and screen recording — standard kit for Twitch/YouTube/Bilibili streamers, with multi-scene switching, source mixing, filters and audio mixing. Free, open source, modest hardware requirements.',
       ja: 'プロ仕様のライブ配信・画面録画ソフト。Twitch/YouTube/ニコ生配信者の定番で、複数シーン切替、ソースミックス、フィルタ、音声ミキシングなどプロ機能搭載。無料オープンソース、要求スペックも控えめ。'
     },
-    url: 'https://obsproject.com/', os: 'cross', category: 'media', price: 'oss'
+    url: 'https://obsproject.com/', repo: 'obsproject/obs-studio',os: 'cross', category: 'media', price: 'oss'
   },
   {
     name: 'Audacity',
@@ -723,7 +728,7 @@ const SOFTWARE = [
       en: 'Free open-source multi-track audio editor — trim recordings, denoise, mix, export MP3, all in stride. The first choice for podcasting, voiceover, audio cleanup. Simpler than pro DAWs but with a much gentler learning curve.',
       ja: '無料オープンソースのマルチトラック音声編集ツール。録音編集、ノイズ除去、ミックス、MP3書き出しなど一通りカバー。ポッドキャスト・ナレーション・音声整理の入門定番。プロDAWより簡素だが学習コストはずっと低い。'
     },
-    url: 'https://www.audacityteam.org/', os: 'cross', category: 'media', price: 'oss'
+    url: 'https://www.audacityteam.org/', repo: 'audacity/audacity',os: 'cross', category: 'media', price: 'oss'
   },
   {
     name: 'DaVinci Resolve',
@@ -789,7 +794,7 @@ const SOFTWARE = [
       en: 'A minimal, lightweight PDF/ebook reader — instant launch, sub-10MB installer, supports PDF, ePub, MOBI, CBZ, DjVu. Far fewer features than Adobe Reader, but speed and cleanliness are the point. Free, open source.',
       ja: '極めて軽量なPDF・電子書籍ビューア。瞬時起動、インストーラ10MB未満、PDF/ePub/MOBI/CBZ/DjVu対応。Adobe Readerより機能ははるかに少ないが、高速と簡潔さがウリ。無料オープンソース。'
     },
-    url: 'https://www.sumatrapdfreader.org/', os: 'windows', category: 'media', price: 'oss'
+    url: 'https://www.sumatrapdfreader.org/', repo: 'sumatrapdfreader/sumatrapdf',os: 'windows', category: 'media', price: 'oss'
   },
 
   // ========== 网络 / Network ==========
@@ -800,7 +805,7 @@ const SOFTWARE = [
       en: 'Free, open source, ad-free BitTorrent client — clean UI, full features, optional Web UI for remote management (great for home NAS). The best alternative since uTorrent went ad-laden after BitTorrent Inc. acquired it.',
       ja: '無料オープンソース、広告なしのBTクライアント。UIが清潔、機能完備、Web UI経由のリモート管理可能（自宅NAS導入に最適）。uTorrentがBitTorrent Inc.買収後に広告だらけになって以降の最良代替。'
     },
-    url: 'https://www.qbittorrent.org/', os: 'cross', category: 'network', price: 'oss'
+    url: 'https://www.qbittorrent.org/', repo: 'qbittorrent/qBittorrent',os: 'cross', category: 'network', price: 'oss'
   },
   {
     name: 'aria2',
@@ -809,7 +814,7 @@ const SOFTWARE = [
       en: 'A CLI download powerhouse — multi-threaded, multi-protocol (HTTP/HTTPS/FTP/SFTP/BT/magnet), resume, rate-limit. Integrates with browsers, Telegram bots, cron. The first choice for scripted downloads. Free and open source.',
       ja: 'CLI最強のダウンローダー。マルチスレッド、複数プロトコル（HTTP/HTTPS/FTP/SFTP/BT/マグネット）、レジューム、速度制限に対応。ブラウザ・Telegramボット・cronと連携可能。スクリプト派ダウンロードの第一選択、無料オープンソース。'
     },
-    url: 'https://aria2.github.io/', os: 'cross', category: 'network', price: 'oss'
+    url: 'https://aria2.github.io/', repo: 'aria2/aria2',os: 'cross', category: 'network', price: 'oss'
   },
   {
     name: 'Wireshark',
@@ -854,7 +859,7 @@ const SOFTWARE = [
       en: 'The fastest tool to make bootable USBs on Windows — under 2 MB, portable, far quicker than Microsoft\'s own Media Creation Tool. Install Windows, build Linux live USBs, prep PE rescue drives — Rufus does them all. Free and open source.',
       ja: 'Windowsでブータブルusbを作る最速ツール。2MB未満のポータブル、Microsoft公式Media Creation Toolより圧倒的に速い。Windowsインストール、Linux Live USB作成、PEレスキューディスク準備すべてに対応。無料オープンソース。'
     },
-    url: 'https://rufus.ie/', os: 'windows', category: 'network', price: 'oss'
+    url: 'https://rufus.ie/', repo: 'pbatard/rufus',os: 'windows', category: 'network', price: 'oss'
   },
   {
     name: 'balenaEtcher',
@@ -863,7 +868,7 @@ const SOFTWARE = [
       en: 'Cross-platform USB/SD image flasher — three-click UI (pick image → pick drive → flash). Best on macOS and Linux (Rufus is faster on Windows). Great for Raspberry Pi images and Linux install drives. Free, open source.',
       ja: 'クロスプラットフォームのUSB/SDイメージ書き込みツール。3ステップUI（イメージ選択→ドライブ選択→書込）。macOS/Linuxに最適（WindowsならRufusが速い）。Raspberry PiイメージやLinuxインストールディスク作成に便利。無料オープンソース。'
     },
-    url: 'https://etcher.balena.io/', os: 'cross', category: 'network', price: 'oss'
+    url: 'https://etcher.balena.io/', repo: 'balena-io/etcher',os: 'cross', category: 'network', price: 'oss'
   },
 
   // ========== 安全 / Security ==========
@@ -874,7 +879,7 @@ const SOFTWARE = [
       en: 'Open-source local password manager — all credentials encrypted in one database file that you sync however you like (cloud, Git, USB stick). More private and in your control than cloud-based services; the trade-off is you handle multi-device sync yourself. Active community, cross-platform.',
       ja: 'オープンソースのローカルパスワード管理。すべてのパスワードを単一の暗号化DBファイルに保存し、同期は自分で（クラウド/Git/USB等）。クラウド型より隠匿性・制御性が高い、代償としてマルチデバイス同期は自前。活発なコミュニティ、クロスプラットフォーム。'
     },
-    url: 'https://keepassxc.org/', os: 'cross', category: 'security', price: 'oss'
+    url: 'https://keepassxc.org/', repo: 'keepassxc/keepassxc',os: 'cross', category: 'security', price: 'oss'
   },
   {
     name: 'Bitwarden',
@@ -901,7 +906,7 @@ const SOFTWARE = [
       en: 'Free open-source disk encryption — TrueCrypt\'s spiritual successor. Encrypt a whole partition or a single container file; visible only when mounted. Hidden volumes provide a deniable "second password reveals different contents" trick.',
       ja: '無料オープンソースのディスク暗号化ツール、TrueCryptの精神的後継。パーティション全体や単一ファイルを暗号化し、マウント時のみ可視化。隠しボリューム機能により「別のパスワードで別の内容が現れる」偽装も可能。'
     },
-    url: 'https://www.veracrypt.fr/', os: 'cross', category: 'security', price: 'oss'
+    url: 'https://www.veracrypt.fr/', repo: 'veracrypt/VeraCrypt',os: 'cross', category: 'security', price: 'oss'
   },
   {
     name: 'Cryptomator',
@@ -910,7 +915,7 @@ const SOFTWARE = [
       en: 'Encryption designed for cloud storage — transparently encrypts files in OneDrive/Dropbox/iCloud; cleartext is only available when mounted. Free desktop apps, one-time purchase for mobile apps.',
       ja: 'クラウドストレージ向けの暗号化ツール。OneDrive/Dropbox/iCloud上のファイルを透過的に暗号化、マウント時のみ平文として閲覧可能。デスクトップ版は無料、モバイルアプリは買切型。'
     },
-    url: 'https://cryptomator.org/', os: 'cross', category: 'security', price: 'oss'
+    url: 'https://cryptomator.org/', repo: 'cryptomator/cryptomator',os: 'cross', category: 'security', price: 'oss'
   },
   {
     name: 'Malwarebytes',
@@ -930,7 +935,7 @@ const SOFTWARE = [
       en: 'Browser that blocks ads and trackers by default — Chromium-based so compatibility and speed match Chrome. Built-in Tor private windows, IPFS support, optional crypto rewards (can be disabled). Seamless switch for Chrome users.',
       ja: '広告・トラッカーをデフォルトでブロックするブラウザ。Chromiumベースで互換性・速度はChromeと同等。Torプライベートウィンドウ、IPFS対応、暗号通貨報酬（オフ可）内蔵。Chromeユーザーはシームレスに移行可能。'
     },
-    url: 'https://brave.com/', os: 'cross', category: 'browser', price: 'oss'
+    url: 'https://brave.com/', repo: 'brave/brave-browser',os: 'cross', category: 'browser', price: 'oss'
   },
   {
     name: 'Arc',

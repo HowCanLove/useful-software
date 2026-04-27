@@ -14,6 +14,7 @@
 - 📱 **Responsive** —— Looks great on mobile, tablet and desktop
 - 🚀 **Zero deps** —— Pure static HTML/CSS/JS, no build step
 - 🖼️ **Detail modal** —— Click any card to see the full intro plus optional screenshots / videos
+- 📥 **Direct download** —— A "Download" button next to "Official site". Powered by an updater script that pulls the latest GitHub release on demand.
 
 ## ➕ Adding software
 
@@ -54,6 +55,27 @@ Each entry can carry a `media` array. The modal renders each item; cards show a 
 ```
 
 For YouTube, **always** use the `https://www.youtube.com/embed/<id>` form (not `watch?v=<id>`).
+
+## 📥 Auto-updating download URLs
+
+`scripts/update-versions.mjs` walks `data.js`, finds GitHub-hosted projects, calls the GitHub API for each one, and writes the latest release info into `versions.json`. The frontend loads that file and shows a download button + version number.
+
+```bash
+# real run — writes versions.json
+node scripts/update-versions.mjs
+
+# preview only — no file write
+node scripts/update-versions.mjs --dry-run
+```
+
+**Auth**: anonymous works (60 req/h limit) but if you have `gh` installed and authenticated the script picks up the token automatically (5000 req/h). Or set `GITHUB_TOKEN`.
+
+**Hooking up a non-github project**:
+
+- If the project is on GitHub but `url` points to a homepage, add `repo: 'owner/name'` to its entry — the script will discover it.
+- If the project is *not* on GitHub, set `downloadUrl: 'https://...'` directly on the entry in `data.js`. That value is used as-is (until/unless `versions.json` later overrides it).
+
+**Recommended cadence**: run weekly and commit `versions.json` so the deployed site stays current. Easy to wire into a GitHub Actions cron later.
 
 ## 🌐 Adding a new language
 

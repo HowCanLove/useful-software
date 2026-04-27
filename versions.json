@@ -1,0 +1,268 @@
+{
+  "powertoys": {
+    "version": "0.98.1",
+    "downloadUrl": "https://github.com/microsoft/PowerToys/releases/download/v0.98.1/PowerToysSetup-0.98.1-x64.exe",
+    "assetName": "PowerToysSetup-0.98.1-x64.exe",
+    "sourceRepo": "microsoft/PowerToys",
+    "checkedAt": "2026-04-27T01:46:53.220Z"
+  },
+  "autohotkey": {
+    "version": "2.0.24",
+    "downloadUrl": "https://github.com/AutoHotkey/AutoHotkey/releases/download/v2.0.24/AutoHotkey_2.0.24_setup.exe",
+    "assetName": "AutoHotkey_2.0.24_setup.exe",
+    "sourceRepo": "AutoHotkey/AutoHotkey",
+    "checkedAt": "2026-04-27T01:46:53.638Z"
+  },
+  "karabiner-elements": {
+    "version": "15.9.0",
+    "downloadUrl": "https://github.com/pqrs-org/Karabiner-Elements/releases/download/v15.9.0/Karabiner-Elements-15.9.0.dmg",
+    "assetName": "Karabiner-Elements-15.9.0.dmg",
+    "sourceRepo": "pqrs-org/Karabiner-Elements",
+    "checkedAt": "2026-04-27T01:46:54.185Z"
+  },
+  "hammerspoon": {
+    "version": "1.1.1",
+    "downloadUrl": "https://github.com/Hammerspoon/hammerspoon/releases/download/1.1.1/Hammerspoon-1.1.1.zip",
+    "assetName": "Hammerspoon-1.1.1.zip",
+    "sourceRepo": "Hammerspoon/hammerspoon",
+    "checkedAt": "2026-04-27T01:46:54.583Z"
+  },
+  "stats": {
+    "version": "2.12.12",
+    "downloadUrl": "https://github.com/exelban/stats/releases/download/v2.12.12/Stats.dmg",
+    "assetName": "Stats.dmg",
+    "sourceRepo": "exelban/stats",
+    "checkedAt": "2026-04-27T01:46:54.996Z"
+  },
+  "rectangle": {
+    "version": "0.95",
+    "downloadUrl": "https://github.com/rxhanson/Rectangle/releases/download/v0.95/Rectangle0.95.dmg",
+    "assetName": "Rectangle0.95.dmg",
+    "sourceRepo": "rxhanson/Rectangle",
+    "checkedAt": "2026-04-27T01:46:55.415Z"
+  },
+  "alttab": {
+    "version": "10.12.0",
+    "downloadUrl": "https://github.com/lwouis/alt-tab-macos/releases/download/v10.12.0/AltTab-10.12.0.zip",
+    "assetName": "AltTab-10.12.0.zip",
+    "sourceRepo": "lwouis/alt-tab-macos",
+    "checkedAt": "2026-04-27T01:46:55.855Z"
+  },
+  "windirstat": {
+    "version": "release/v2.5.0",
+    "downloadUrl": "https://github.com/windirstat/windirstat/releases/download/release/v2.5.0/WinDirStat-x64.msi",
+    "assetName": "WinDirStat-x64.msi",
+    "sourceRepo": "windirstat/windirstat",
+    "checkedAt": "2026-04-27T01:46:56.269Z"
+  },
+  "files": {
+    "version": "4.0.38",
+    "downloadUrl": "https://github.com/files-community/Files/releases/tag/v4.0.38",
+    "assetName": null,
+    "sourceRepo": "files-community/Files",
+    "checkedAt": "2026-04-27T01:46:57.864Z"
+  },
+  "sharex": {
+    "version": "19.0.2",
+    "downloadUrl": "https://github.com/ShareX/ShareX/releases/download/v19.0.2/ShareX-19.0.2-setup.exe",
+    "assetName": "ShareX-19.0.2-setup.exe",
+    "sourceRepo": "ShareX/ShareX",
+    "checkedAt": "2026-04-27T01:46:58.266Z"
+  },
+  "maccy": {
+    "version": "2.6.1",
+    "downloadUrl": "https://github.com/p0deje/Maccy/releases/download/2.6.1/Maccy.app.zip",
+    "assetName": "Maccy.app.zip",
+    "sourceRepo": "p0deje/Maccy",
+    "checkedAt": "2026-04-27T01:46:58.654Z"
+  },
+  "flow-launcher": {
+    "version": "2.1.1",
+    "downloadUrl": "https://github.com/Flow-Launcher/Flow.Launcher/releases/download/v2.1.1/Flow-Launcher-Setup.exe",
+    "assetName": "Flow-Launcher-Setup.exe",
+    "sourceRepo": "Flow-Launcher/Flow.Launcher",
+    "checkedAt": "2026-04-27T01:46:59.084Z"
+  },
+  "wox": {
+    "version": "2.0.3",
+    "downloadUrl": "https://github.com/Wox-launcher/Wox/releases/download/v2.0.3/wox-windows-amd64.exe",
+    "assetName": "wox-windows-amd64.exe",
+    "sourceRepo": "Wox-launcher/Wox",
+    "checkedAt": "2026-04-27T01:46:59.630Z"
+  },
+  "logseq": {
+    "version": "0.10.15",
+    "downloadUrl": "https://github.com/logseq/logseq/releases/tag/0.10.15",
+    "assetName": null,
+    "sourceRepo": "logseq/logseq",
+    "checkedAt": "2026-04-27T01:47:00.073Z"
+  },
+  "joplin": {
+    "version": "3.5.13",
+    "downloadUrl": "https://github.com/laurent22/joplin/releases/tag/v3.5.13",
+    "assetName": null,
+    "sourceRepo": "laurent22/joplin",
+    "checkedAt": "2026-04-27T01:47:00.498Z"
+  },
+  "anki": {
+    "version": "25.09.2",
+    "downloadUrl": "https://github.com/ankitects/anki/releases/tag/25.09.2",
+    "assetName": null,
+    "sourceRepo": "ankitects/anki",
+    "checkedAt": "2026-04-27T01:47:00.904Z"
+  },
+  "visual-studio-code": {
+    "version": "1.117.0",
+    "downloadUrl": "https://github.com/microsoft/vscode/releases/tag/1.117.0",
+    "assetName": null,
+    "sourceRepo": "microsoft/vscode",
+    "checkedAt": "2026-04-27T01:47:02.844Z"
+  },
+  "windows-terminal": {
+    "version": "1.24.10921.0",
+    "downloadUrl": "https://github.com/microsoft/terminal/releases/download/v1.24.10921.0/Microsoft.WindowsTerminal_1.24.10921.0_x64.zip",
+    "assetName": "Microsoft.WindowsTerminal_1.24.10921.0_x64.zip",
+    "sourceRepo": "microsoft/terminal",
+    "checkedAt": "2026-04-27T01:47:03.315Z"
+  },
+  "github-desktop": {
+    "version": "release-3.5.8",
+    "downloadUrl": "https://github.com/desktop/desktop/releases/tag/release-3.5.8",
+    "assetName": null,
+    "sourceRepo": "desktop/desktop",
+    "checkedAt": "2026-04-27T01:47:04.638Z"
+  },
+  "insomnia": {
+    "version": "core@12.5.0",
+    "downloadUrl": "https://github.com/Kong/insomnia/releases/tag/core%4012.5.0",
+    "assetName": null,
+    "sourceRepo": "Kong/insomnia",
+    "checkedAt": "2026-04-27T01:47:05.252Z"
+  },
+  "hoppscotch": {
+    "version": "2026.3.1",
+    "downloadUrl": "https://github.com/hoppscotch/hoppscotch/releases/tag/2026.3.1",
+    "assetName": null,
+    "sourceRepo": "hoppscotch/hoppscotch",
+    "checkedAt": "2026-04-27T01:47:05.648Z"
+  },
+  "dbeaver": {
+    "version": "26.0.3",
+    "downloadUrl": "https://github.com/dbeaver/dbeaver/releases/tag/26.0.3",
+    "assetName": null,
+    "sourceRepo": "dbeaver/dbeaver",
+    "checkedAt": "2026-04-27T01:47:06.076Z"
+  },
+  "mockoon": {
+    "version": "9.6.1",
+    "downloadUrl": "https://github.com/mockoon/mockoon/releases/tag/v9.6.1",
+    "assetName": null,
+    "sourceRepo": "mockoon/mockoon",
+    "checkedAt": "2026-04-27T01:47:07.461Z"
+  },
+  "homebrew": {
+    "version": "5.1.7",
+    "downloadUrl": "https://github.com/Homebrew/brew/releases/tag/5.1.7",
+    "assetName": null,
+    "sourceRepo": "Homebrew/brew",
+    "checkedAt": "2026-04-27T01:47:07.900Z"
+  },
+  "scoop": {
+    "version": "0.5.3",
+    "downloadUrl": "https://github.com/ScoopInstaller/Scoop/releases/tag/v0.5.3",
+    "assetName": null,
+    "sourceRepo": "ScoopInstaller/Scoop",
+    "checkedAt": "2026-04-27T01:47:08.314Z"
+  },
+  "winget": {
+    "version": "1.28.240",
+    "downloadUrl": "https://github.com/microsoft/winget-cli/releases/download/v1.28.240/DesktopAppInstallerPolicies.zip",
+    "assetName": "DesktopAppInstallerPolicies.zip",
+    "sourceRepo": "microsoft/winget-cli",
+    "checkedAt": "2026-04-27T01:47:08.808Z"
+  },
+  "mpv": {
+    "version": "0.41.0",
+    "downloadUrl": "https://github.com/mpv-player/mpv/releases/tag/v0.41.0",
+    "assetName": null,
+    "sourceRepo": "mpv-player/mpv",
+    "checkedAt": "2026-04-27T01:47:09.522Z"
+  },
+  "iina": {
+    "version": "1.4.2-build164",
+    "downloadUrl": "https://github.com/iina/iina/releases/download/v1.4.2-build164/IINA.v1.4.2-build164.dmg",
+    "assetName": "IINA.v1.4.2-build164.dmg",
+    "sourceRepo": "iina/iina",
+    "checkedAt": "2026-04-27T01:47:09.997Z"
+  },
+  "handbrake": {
+    "version": "1.11.1",
+    "downloadUrl": "https://github.com/HandBrake/HandBrake/releases/tag/1.11.1",
+    "assetName": null,
+    "sourceRepo": "HandBrake/HandBrake",
+    "checkedAt": "2026-04-27T01:47:10.462Z"
+  },
+  "obs-studio": {
+    "version": "32.1.2",
+    "downloadUrl": "https://github.com/obsproject/obs-studio/releases/tag/32.1.2",
+    "assetName": null,
+    "sourceRepo": "obsproject/obs-studio",
+    "checkedAt": "2026-04-27T01:47:10.903Z"
+  },
+  "audacity": {
+    "version": "Audacity-3.7.7",
+    "downloadUrl": "https://github.com/audacity/audacity/releases/tag/Audacity-3.7.7",
+    "assetName": null,
+    "sourceRepo": "audacity/audacity",
+    "checkedAt": "2026-04-27T01:47:11.335Z"
+  },
+  "sumatra-pdf": {
+    "version": "3.6.1rel",
+    "downloadUrl": "https://github.com/sumatrapdfreader/sumatrapdf/releases/tag/3.6.1rel",
+    "assetName": null,
+    "sourceRepo": "sumatrapdfreader/sumatrapdf",
+    "checkedAt": "2026-04-27T01:47:11.749Z"
+  },
+  "aria2": {
+    "version": "release-1.37.0",
+    "downloadUrl": "https://github.com/aria2/aria2/releases/tag/release-1.37.0",
+    "assetName": null,
+    "sourceRepo": "aria2/aria2",
+    "checkedAt": "2026-04-27T01:47:13.635Z"
+  },
+  "rufus": {
+    "version": "4.13",
+    "downloadUrl": "https://github.com/pbatard/rufus/releases/download/v4.13/rufus-4.13.exe",
+    "assetName": "rufus-4.13.exe",
+    "sourceRepo": "pbatard/rufus",
+    "checkedAt": "2026-04-27T01:47:14.034Z"
+  },
+  "balenaetcher": {
+    "version": "2.1.4",
+    "downloadUrl": "https://github.com/balena-io/etcher/releases/tag/v2.1.4",
+    "assetName": null,
+    "sourceRepo": "balena-io/etcher",
+    "checkedAt": "2026-04-27T01:47:14.485Z"
+  },
+  "veracrypt": {
+    "version": "VeraCrypt_1.26.24",
+    "downloadUrl": "https://github.com/veracrypt/VeraCrypt/releases/tag/VeraCrypt_1.26.24",
+    "assetName": null,
+    "sourceRepo": "veracrypt/VeraCrypt",
+    "checkedAt": "2026-04-27T01:47:15.711Z"
+  },
+  "cryptomator": {
+    "version": "1.19.2",
+    "downloadUrl": "https://github.com/cryptomator/cryptomator/releases/tag/1.19.2",
+    "assetName": null,
+    "sourceRepo": "cryptomator/cryptomator",
+    "checkedAt": "2026-04-27T01:47:16.133Z"
+  },
+  "brave": {
+    "version": "1.89.143",
+    "downloadUrl": "https://github.com/brave/brave-browser/releases/tag/v1.89.143",
+    "assetName": null,
+    "sourceRepo": "brave/brave-browser",
+    "checkedAt": "2026-04-27T01:47:16.651Z"
+  }
+}
