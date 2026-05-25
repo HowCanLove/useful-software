@@ -503,7 +503,7 @@ function loadCategory() {    try {      const saved = localStorage.getItem(CATEG
 
     const footer = document.getElementById('footerText');
     if (footer) {
-      const linkHTML = `<a href="https://github.com/HowCanLove/useful-software/edit/main/data.js" target="_blank" rel="noopener">${t('footer.linkText')}</a>`;
+      const linkHTML = t('footer.linkText');
       footer.innerHTML = t('footer.text', { link: linkHTML, n: SOFTWARE.length });
     }
 
@@ -572,12 +572,11 @@ function loadCategory() {    try {      const saved = localStorage.getItem(CATEG
     } else {
       $modalMedia.innerHTML = '';
       $modalMedia.hidden = true;
-      const editUrl = 'https://github.com/HowCanLove/useful-software/edit/main/data.js';
       const noMediaText = state.lang === 'zh'
-        ? `🖼️ 暂无截图或视频。可以 <a href="${editUrl}" target="_blank" rel="noopener">编辑 data.js</a> 给这条加 <code>media</code> 字段。`
+        ? `🖼️ 暂无截图或视频。可以 编辑 data.js 给这条加 <code>media</code> 字段。`
         : state.lang === 'ja'
-          ? `🖼️ スクリーンショット・動画は未登録。<a href="${editUrl}" target="_blank" rel="noopener">data.js</a> を編集して <code>media</code> フィールドを追加できます。`
-          : `🖼️ No screenshots or videos yet. <a href="${editUrl}" target="_blank" rel="noopener">Edit data.js</a> to add a <code>media</code> field for this entry.`;
+          ? `🖼️ スクリーンショット・動画は未登録。data.js を編集して <code>media</code> フィールドを追加できます。`
+          : `🖼️ No screenshots or videos yet. Edit data.js to add a <code>media</code> field for this entry.`;
       $modalMediaEmpty.innerHTML = noMediaText;
       $modalMediaEmpty.hidden = false;
     }
